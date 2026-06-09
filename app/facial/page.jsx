@@ -5,7 +5,7 @@ import { services } from '@/lib/services';
 
 export default function Facial() {
   const data = services.facial;
-  const rageaSection = data.sections[0];
+  const raagaSection = data.sections[0];
   const lotusSection = data.sections[1];
   const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
 
@@ -33,14 +33,14 @@ export default function Facial() {
         </div>
       </section>
 
-      {/* Ragea Facials Bento Grid */}
+      {/* Raaga Facials Bento Grid */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
             <span className="text-mauve font-poppins text-xs font-semibold uppercase tracking-widest">
               Premium Selection
             </span>
-            <h2 className="font-playfair text-3xl font-bold text-charcoal mt-1">Ragea Facials</h2>
+            <h2 className="font-playfair text-3xl font-bold text-charcoal mt-1">Raaga Facials</h2>
           </div>
           <p className="text-charcoal/70 max-w-md font-poppins text-sm leading-relaxed">
             Advanced dermatological solutions for specific skin concerns including anti-ageing, hyperpigmentation, acne reduction, and deep skin rejuvenation.
@@ -48,7 +48,7 @@ export default function Facial() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {rageaSection.items.map((item, idx) => {
+          {raagaSection.items.map((item, idx) => {
             const isPopular = item.name === 'Clean Up Fruit' || item.name === 'O3+ Bridal Facial';
             return (
               <div
