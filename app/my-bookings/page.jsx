@@ -116,7 +116,19 @@ function MyBookingsContent() {
       }
       const data = await response.json();
       const remoteList = Array.isArray(data) ? data : [];
-      setBookings(processBookings([...storedLocal, ...remoteList]));
+
+      // Deduplicate: filter out storedLocal bookings that are already in remoteList
+      const filteredLocal = storedLocal.filter(local => {
+        return !remoteList.some(remote => {
+          const localDate = local.date;
+          const remoteDate = remote.date;
+          const localService = (local.subService || '').trim().toLowerCase();
+          const remoteService = (remote.subService || '').trim().toLowerCase();
+          return localDate === remoteDate && localService === remoteService;
+        });
+      });
+
+      setBookings(processBookings([...filteredLocal, ...remoteList]));
       setSearched(true);
     } catch (err) {
       console.error('Fetch bookings error:', err);

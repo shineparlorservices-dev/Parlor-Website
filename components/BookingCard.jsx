@@ -35,6 +35,26 @@ export default function BookingCard({ category, subService, date, time, status, 
     }
   };
 
+  const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    // Check if it's a serialized Date/Time object from Apps Script (usually 1899 epoch date)
+    if (typeof timeStr === 'string' && timeStr.includes('T') && (timeStr.startsWith('1899-') || timeStr.startsWith('1900-'))) {
+      try {
+        const d = new Date(timeStr);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+          });
+        }
+      } catch {
+        return timeStr;
+      }
+    }
+    return timeStr;
+  };
+
   return (
     <div className="bg-white border border-rose/25 rounded-[24px] p-6 shadow-sm hover-card-effect flex flex-col gap-4 animate-slide-up">
       <div className="flex justify-between items-center">
@@ -60,7 +80,7 @@ export default function BookingCard({ category, subService, date, time, status, 
         </div>
         <div className="flex items-center gap-3 text-charcoal/70">
           <Clock className="w-4 h-4 text-gold" />
-          <span className="text-sm font-poppins">{time}</span>
+          <span className="text-sm font-poppins">{formatTime(time)}</span>
         </div>
         {notes && (
           <div className="flex items-start gap-3 text-charcoal/70 mt-1.5 bg-cream/60 p-3 rounded-xl border border-rose/10">
