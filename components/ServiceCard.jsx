@@ -4,7 +4,10 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function ServiceCard({ title, emoji, slug, startingPrice }) {
   return (
-    <div className="relative bg-white border border-rose/20 rounded-[28px] p-7 shadow-sm hover-card-lift flex flex-col justify-between group overflow-hidden">
+    <Link
+      href={`/${slug}`}
+      className="relative bg-white border border-rose/20 rounded-[28px] p-7 shadow-sm hover-card-lift flex flex-col justify-between group overflow-hidden cursor-pointer"
+    >
       {/* Subtle gradient accent */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-rose/15 to-transparent rounded-bl-full pointer-events-none" />
 
@@ -23,13 +26,12 @@ export default function ServiceCard({ title, emoji, slug, startingPrice }) {
         </div>
       </div>
 
-      <Link
-        href={`/${slug}`}
-        className="relative z-10 flex items-center gap-2 text-sm font-semibold font-poppins text-mauve group-hover:text-gold transition-colors duration-200 min-h-[48px] border-t border-rose/10 pt-4 mt-auto"
+      <div
+        className="flex items-center gap-2 text-sm font-semibold font-poppins text-mauve group-hover:text-gold transition-colors duration-200 min-h-[48px] border-t border-rose/10 pt-4 mt-auto"
       >
         <span>View Prices & Book</span>
         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 }

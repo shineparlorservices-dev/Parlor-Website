@@ -49,10 +49,10 @@ export default function Home() {
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
               <Link
-                href="/booking"
+                href="#services"
                 className="bg-mauve text-white px-8 py-4 rounded-full font-semibold text-center hover:scale-105 btn-active-scale transition-all shadow-lg hover:bg-mauve/95 animate-pulse-glow"
               >
-                Book Home Appointment
+                Our Services
               </Link>
               <a
                 href={`tel:${phone}`}
