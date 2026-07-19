@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import { CartProvider } from '@/lib/CartContext';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -27,12 +28,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${playfair.variable} ${poppins.variable} scroll-smooth`}>
       <body className="font-poppins bg-cream text-charcoal min-h-screen flex flex-col antialiased">
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
-        <WhatsAppButton />
+        <CartProvider>
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+          <WhatsAppButton />
+        </CartProvider>
       </body>
     </html>
   );

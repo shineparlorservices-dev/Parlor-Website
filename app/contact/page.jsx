@@ -103,7 +103,7 @@ export default function Contact() {
                 <h3 className="font-playfair text-xl font-bold text-charcoal">Our Service Areas</h3>
               </div>
               <p className="text-charcoal/70 text-sm mb-6 leading-relaxed">
-                We travel directly to your location. Our professional beauticians cover all major neighborhoods across Bangalore, including:
+                I travel directly to your location with all premium products and professional equipment. Servicing major residential neighborhoods across Bangalore, including:
               </p>
               <div className="grid grid-cols-2 gap-4">
                 {locations.map((loc) => (
@@ -115,7 +115,7 @@ export default function Contact() {
               </div>
               <div className="mt-8 p-4 bg-rose/10 rounded-2xl border border-rose/15">
                 <p className="text-xs text-mauve text-center font-semibold leading-relaxed">
-                  Don't see your locality? Give us a call, and we will do our best to accommodate your schedule!
+                  Don't see your locality? Give me a call directly, and I will do my best to accommodate your requested time!
                 </p>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function Contact() {
               <img
                 alt="Luxury At-Home Beauty Service setup"
                 className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida/AP1WRLsbtyLdv14nB6jVi3az0TQuN8FbSZxiPLTtkYDI8cL7vfaWEh-ish-5qjIKDNXtfbxQC47wmHKIkiyXjz5ryWUG07zGgWPtvrtImo0d1o8xCeY-BdkaEBjEkz1RVyNh2R0IQ6IOin2PozYiro7QkR3v4nIKy_sF2ihgw_a4h8_AXQxyKzYiLECINhEe9mzJMO1aOuIt8o_Df8ypGUPKjoATq8SvIPDSuZ_d8q6yBCGyNMuPsOUfm2gabEM"
+                src="/images/contact-editorial.png"
               />
               <div className="absolute inset-0 bg-charcoal/30 flex items-center justify-center backdrop-blur-[1px]">
                 <p className="font-playfair text-2xl sm:text-3xl text-white font-bold italic text-center px-4 leading-normal drop-shadow-md">

@@ -3,15 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { subServices } from '@/lib/services';
-import { Sparkles, Calendar, Clock, Phone, Loader2 } from 'lucide-react';
+import { Sparkles, Calendar, Clock, Phone, Loader2, Trash2, ShoppingBag } from 'lucide-react';
+import { useCart } from '@/lib/CartContext';
 
 export default function BookingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { cart, removeFromCart, clearCart, getCartTotal } = useCart();
 
   // Form states
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [category, setCategory] = useState('');
   const [subService, setSubService] = useState('');
   const [date, setDate] = useState('');
@@ -36,8 +39,10 @@ export default function BookingForm() {
     setMinDate(`${yyyy}-${mm}-${dd}`);
   }, []);
 
-  // Pre-select category and service from URL params
+  // Pre-select category and service from URL params (if cart is empty)
   useEffect(() => {
+    if (cart.length > 0) return; // Cart overrides single URL select
+
     const paramCategory = searchParams.get('category');
     const paramService = searchParams.get('service');
 
@@ -52,7 +57,7 @@ export default function BookingForm() {
     if (paramService) {
       setSubService(paramService);
     }
-  }, [searchParams]);
+  }, [searchParams, cart]);
 
   // Handle category change
   const handleCategoryChange = (e) => {
@@ -83,33 +88,56 @@ export default function BookingForm() {
     e.preventDefault();
     setError('');
 
+    // If cart is empty, user must have selected category and subService via dropdown
+    const isCartBooking = cart.length > 0;
+    const finalCategory = isCartBooking ? cart.map(i => i.category).join(', ') : category;
+    const finalSubService = isCartBooking ? cart.map(i => i.name).join(', ') : subService;
+
     // Basic Validation
-    if (!name || !phone || !category || !subService || !date || !time) {
+    if (!name || !phone || !address || !finalCategory || !finalSubService || !date || !time) {
       setError('Please fill in all required fields.');
       return;
     }
 
     setLoading(true);
 
+    const payload = {
+      name,
+      phone,
+      address,
+      category: finalCategory,
+      subService: finalSubService,
+      date,
+      time,
+      notes: isCartBooking ? `Cart Total: ₹${getCartTotal().toLocaleString()}. ${notes}` : notes,
+      status: 'Pending',
+    };
+
     try {
       // POST request to Google Apps Script
-      // mode: 'no-cors' is typically used for Apps Script endpoints
-      const response = await fetch(scriptUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        mode: 'no-cors',
-        body: JSON.stringify({
-          name,
-          phone,
-          category,
-          subService,
-          date,
-          time,
-          notes,
-        }),
-      });
+      if (scriptUrl !== 'YOUR_APPS_SCRIPT_URL') {
+        await fetch(scriptUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'no-cors',
+          body: JSON.stringify(payload),
+        });
+      }
+
+      // Always save booking locally to localStorage for "My Bookings" page lookup compatibility
+      const localBookingsStr = localStorage.getItem('shine_beauty_local_bookings');
+      let localBookings = [];
+      if (localBookingsStr) {
+        try {
+          localBookings = JSON.parse(localBookingsStr);
+        } catch {
+          localBookings = [];
+        }
+      }
+      localBookings.push(payload);
+      localStorage.setItem('shine_beauty_local_bookings', JSON.stringify(localBookings));
 
       // Show success modal since no-cors resolved means the fetch executed.
       setShowSuccessModal(true);
@@ -123,8 +151,11 @@ export default function BookingForm() {
 
   const handleSuccessConfirm = () => {
     setShowSuccessModal(false);
-    router.push('/');
+    clearCart(); // Clear cart after successful booking
+    router.push(`/my-bookings?phone=${encodeURIComponent(phone)}`);
   };
+
+  const isCartBooking = cart.length > 0;
 
   return (
     <>
@@ -162,51 +193,103 @@ export default function BookingForm() {
             </div>
           </div>
 
-          {/* Service Category & Sub-Service Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="category" className="font-poppins text-sm font-semibold text-charcoal/80">
-                Service Category*
-              </label>
-              <select
-                id="category"
-                value={category}
-                onChange={handleCategoryChange}
-                required
-                className="bg-cream border border-rose/20 rounded-xl px-3 h-12 text-[16px] font-poppins text-charcoal input-focus-gold"
-              >
-                <option value="" disabled>
-                  Select Category
-                </option>
-                <option value="Threading">Threading</option>
-                <option value="Facial">Facial</option>
-                <option value="Waxing">Waxing</option>
-                <option value="Bleach">Bleach</option>
-              </select>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="subService" className="font-poppins text-sm font-semibold text-charcoal/80">
-                Sub-Service*
-              </label>
-              <select
-                id="subService"
-                value={subService}
-                onChange={(e) => setSubService(e.target.value)}
-                required
-                disabled={!category}
-                className="bg-cream border border-rose/20 rounded-xl px-3 h-12 text-[16px] font-poppins text-charcoal input-focus-gold disabled:opacity-50"
-              >
-                <option value="" disabled>
-                  {category ? 'Select Sub-Service' : 'Choose a category first'}
-                </option>
-                {subServiceOptions.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Home Address (Bangalore Only) */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="address" className="font-poppins text-sm font-semibold text-charcoal/80">
+              Bangalore Home Address* (No shop walk-ins available)
+            </label>
+            <input
+              id="address"
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="e.g. Flat 302, Green Glen Layout, Bellandur, Bangalore"
+              required
+              className="bg-cream border border-rose/20 rounded-xl p-3.5 h-12 text-[16px] font-poppins text-charcoal placeholder:text-charcoal/40 input-focus-gold"
+            />
           </div>
+
+          {/* Service items display */}
+          {isCartBooking ? (
+            <div className="bg-cream/50 border border-rose/15 rounded-2xl p-5 space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-rose/10">
+                <ShoppingBag className="w-5 h-5 text-mauve" />
+                <h3 className="font-playfair text-base font-bold text-charcoal">Selected Services in Cart</h3>
+              </div>
+              <div className="max-h-60 overflow-y-auto space-y-3 pr-2">
+                {cart.map((item, idx) => (
+                  <div key={idx} className="flex justify-between items-center bg-white p-3 rounded-xl border border-rose/5 shadow-2xs">
+                    <div>
+                      <span className="text-[9px] font-bold text-mauve uppercase bg-rose/15 px-1.5 py-0.5 rounded-md">
+                        {item.category}
+                      </span>
+                      <h4 className="font-poppins text-xs font-semibold text-charcoal mt-1">{item.name}</h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-playfair text-sm font-bold text-gold">{item.price}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFromCart(item.category, item.name)}
+                        className="text-charcoal/40 hover:text-red-500 p-1 hover:bg-red-50 rounded-full transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between items-center pt-3 border-t border-rose/10 font-poppins text-sm font-semibold">
+                <span className="text-charcoal/70">Estimated Total:</span>
+                <span className="font-playfair text-lg font-bold text-gold">₹{getCartTotal().toLocaleString()}</span>
+              </div>
+            </div>
+          ) : (
+            /* Fallback Single Service Category & Sub-Service Grid if Cart is Empty */
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="category" className="font-poppins text-sm font-semibold text-charcoal/80">
+                  Service Category*
+                </label>
+                <select
+                  id="category"
+                  value={category}
+                  onChange={handleCategoryChange}
+                  required={!isCartBooking}
+                  className="bg-cream border border-rose/20 rounded-xl px-3 h-12 text-[16px] font-poppins text-charcoal input-focus-gold"
+                >
+                  <option value="" disabled>
+                    Select Category
+                  </option>
+                  <option value="Threading">Threading</option>
+                  <option value="Facial">Facial</option>
+                  <option value="Waxing">Waxing</option>
+                  <option value="Bleach">Bleach</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="subService" className="font-poppins text-sm font-semibold text-charcoal/80">
+                  Sub-Service*
+                </label>
+                <select
+                  id="subService"
+                  value={subService}
+                  onChange={(e) => setSubService(e.target.value)}
+                  required={!isCartBooking}
+                  disabled={!category}
+                  className="bg-cream border border-rose/20 rounded-xl px-3 h-12 text-[16px] font-poppins text-charcoal input-focus-gold disabled:opacity-50"
+                >
+                  <option value="" disabled>
+                    {category ? 'Select Sub-Service' : 'Choose a category first'}
+                  </option>
+                  {subServiceOptions.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
 
           {/* Date & Time Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -269,7 +352,7 @@ export default function BookingForm() {
               <div className="flex flex-wrap gap-3">
                 <a
                   href={`tel:${ownerPhone}`}
-                  className="bg-mauve text-white px-4 py-2 rounded-full font-poppins text-xs font-semibold flex items-center gap-1.5 hover:bg-mauve/90 transition-colors shadow-sm"
+                  className="bg-mauve text-white px-4 py-2 rounded-full font-poppins text-xs font-semibold flex items-center gap-1.5 hover:bg-mauve/95 transition-colors shadow-sm"
                 >
                   <Phone className="w-3.5 h-3.5" /> Call {ownerPhone}
                 </a>
@@ -309,11 +392,11 @@ export default function BookingForm() {
             </div>
             <h3 className="font-playfair text-2xl font-bold text-charcoal mb-2">Booking Received!</h3>
             <p className="font-poppins text-sm text-charcoal/70 mb-6 leading-relaxed">
-              We have received your request and will call you shortly to confirm your luxury session at home.
+              I have received your doorstep visit request and will call you shortly to confirm your luxury appointment.
             </p>
             <button
               onClick={handleSuccessConfirm}
-              className="w-full bg-mauve text-white py-3.5 rounded-full font-poppins font-semibold hover:bg-mauve/90 transition-all hover:scale-105 btn-active-scale shadow-md"
+              className="w-full bg-mauve text-white py-3.5 rounded-full font-poppins font-semibold hover:bg-mauve/90 transition-all hover:scale-105 btn-active-scale shadow-md cursor-pointer"
             >
               OK
             </button>

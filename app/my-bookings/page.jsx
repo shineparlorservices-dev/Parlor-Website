@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Search, CalendarDays, Loader2, Sparkles, PhoneCall } from 'lucide-react';
 import BookingCard from '@/components/BookingCard';
 
-export default function MyBookings() {
+function MyBookingsContent() {
+  const searchParams = useSearchParams();
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -16,18 +18,55 @@ export default function MyBookings() {
   const scriptUrl = process.env.NEXT_PUBLIC_SCRIPT_URL || 'YOUR_APPS_SCRIPT_URL';
   const ownerPhone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
 
-  const handleSearch = async (e) => {
+  // Read phone search param on mount and auto-trigger search
+  useEffect(() => {
+    const paramPhone = searchParams.get('phone');
+    if (paramPhone) {
+      setPhone(paramPhone);
+      triggerSearch(paramPhone);
+    }
+  }, [searchParams]);
+
+  const handleSearchForm = (e) => {
     e.preventDefault();
+    triggerSearch(phone);
+  };
+
+  const triggerSearch = async (searchPhone) => {
     setError('');
     setIsDemo(false);
     
-    if (!phone) {
+    if (!searchPhone) {
       setError('Please enter a phone number.');
       return;
     }
 
     setLoading(true);
     setSearched(false);
+
+    // Read local bookings from localStorage
+    let storedLocal = [];
+    const localBookingsStr = localStorage.getItem('shine_beauty_local_bookings');
+    if (localBookingsStr) {
+      try {
+        const parsed = JSON.parse(localBookingsStr);
+        const cleanSearch = searchPhone.replace(/[^\d]/g, '');
+        storedLocal = parsed.filter(b => b.phone.replace(/[^\d]/g, '') === cleanSearch);
+      } catch (e) {
+        console.error('Failed to parse local bookings:', e);
+      }
+    }
+
+    // Process local bookings (change status to 'Completed' if date is in the past)
+    const processBookings = (list) => {
+      const todayStr = new Date().toISOString().split('T')[0];
+      return list.map(b => {
+        if (b.date < todayStr) {
+          return { ...b, status: 'Completed' };
+        }
+        return b;
+      });
+    };
 
     // If scriptUrl is the default placeholder, fallback to demo mode
     if (scriptUrl === 'YOUR_APPS_SCRIPT_URL') {
@@ -55,13 +94,14 @@ export default function MyBookings() {
             subService: 'Full Hand Bleach',
             date: new Date(Date.now() - 86400000 * 4).toISOString().split('T')[0], // 4 days ago
             time: '04:00 PM',
-            status: 'Done',
+            status: 'Completed',
             notes: 'Fast service requested.',
           },
         ];
         
-        // Return results for length > 5, else empty
-        setBookings(phone.length > 5 ? mockData : []);
+        // Filter by phone search length
+        const rawResults = searchPhone.length > 5 ? [...storedLocal, ...mockData] : [...storedLocal];
+        setBookings(processBookings(rawResults));
         setIsDemo(true);
         setSearched(true);
         setLoading(false);
@@ -70,16 +110,17 @@ export default function MyBookings() {
     }
 
     try {
-      const response = await fetch(`${scriptUrl}?phone=${encodeURIComponent(phone)}`);
+      const response = await fetch(`${scriptUrl}?phone=${encodeURIComponent(searchPhone)}`);
       if (!response.ok) {
         throw new Error('API request failed');
       }
       const data = await response.json();
-      setBookings(Array.isArray(data) ? data : []);
+      const remoteList = Array.isArray(data) ? data : [];
+      setBookings(processBookings([...storedLocal, ...remoteList]));
       setSearched(true);
     } catch (err) {
       console.error('Fetch bookings error:', err);
-      setError('Could not retrieve bookings from the server. Showing offline demo bookings instead.');
+      setError('Could not retrieve bookings from the server. Showing local and offline demo bookings instead.');
       
       // Fallback offline mock data for testing
       const mockData = [
@@ -88,11 +129,11 @@ export default function MyBookings() {
           subService: 'Lotus Gold',
           date: '2026-06-15',
           time: '01:00 PM',
-          status: 'Confirmed',
+          status: 'Completed',
           notes: 'Dull skin removal.',
         }
       ];
-      setBookings(mockData);
+      setBookings(processBookings([...storedLocal, ...mockData]));
       setIsDemo(true);
       setSearched(true);
     } finally {
@@ -114,7 +155,7 @@ export default function MyBookings() {
 
       {/* Lookup Card */}
       <div className="max-w-lg mx-auto bg-white border border-rose/25 p-6 md:p-8 rounded-[24px] shadow-xl mb-12">
-        <form onSubmit={handleSearch} className="space-y-4">
+        <form onSubmit={handleSearchForm} className="space-y-4">
           <div className="flex flex-col gap-1.5">
             <label htmlFor="lookupPhone" className="font-poppins text-sm font-semibold text-charcoal/80">
               Registered Phone Number
@@ -132,7 +173,7 @@ export default function MyBookings() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-mauve text-white py-3.5 rounded-full font-semibold text-sm hover:bg-mauve/90 btn-active-scale transition-all flex items-center justify-center gap-2 hover:scale-[1.01] shadow-md"
+            className="w-full bg-mauve text-white py-3.5 rounded-full font-semibold text-sm hover:bg-mauve/90 btn-active-scale transition-all flex items-center justify-center gap-2 hover:scale-[1.01] shadow-md cursor-pointer"
           >
             {loading ? (
               <>
@@ -213,5 +254,20 @@ export default function MyBookings() {
         </section>
       )}
     </div>
+  );
+}
+
+export default function MyBookings() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-cream font-poppins">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-mauve" />
+          <p className="text-sm text-charcoal/60">Loading your bookings...</p>
+        </div>
+      </div>
+    }>
+      <MyBookingsContent />
+    </Suspense>
   );
 }

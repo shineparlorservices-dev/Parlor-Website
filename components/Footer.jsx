@@ -5,7 +5,6 @@ export default function Footer() {
   const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
   const email = process.env.NEXT_PUBLIC_EMAIL || 'owner@gmail.com';
   const instagram = 'YOUR_INSTAGRAM_URL';
-  const mapsLink = 'YOUR_GOOGLE_MAPS_LINK';
 
   return (
     <footer className="bg-charcoal text-cream pt-16 pb-8 font-poppins">
@@ -15,11 +14,12 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="font-playfair text-2xl font-bold text-gold">Shine Beauty Services</h3>
             <p className="text-cream/70 text-sm leading-relaxed max-w-sm">
-              Exclusive At-Home Beauty Services in Bangalore. We bring premium care, high-quality products, and expert salon techniques directly to your door.
+              Personalized At-Home Luxury Salon Services in Bangalore. Delivered directly to your doorstep by the owner with premium, high-quality products.
             </p>
             <div className="pt-2">
-              <p className="text-xs text-rose font-semibold uppercase tracking-wider">Office (No Walk-ins)</p>
-              <p className="text-sm text-cream/80">MG Road, Bangalore, Karnataka, India</p>
+              <p className="text-xs text-rose font-semibold uppercase tracking-wider">Service Mode</p>
+              <p className="text-sm text-cream/80">100% Home Visit Service (No physical shop)</p>
+              <p className="text-xs text-cream/50 mt-1">Serving all major residential areas of Bangalore</p>
             </div>
           </div>
 
@@ -66,15 +66,6 @@ export default function Footer() {
                 className="text-cream/70 hover:text-rose transition-colors flex items-center gap-1.5 text-sm"
               >
                 Instagram
-              </a>
-              <span className="text-rose/30">|</span>
-              <a
-                href={mapsLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-cream/70 hover:text-rose transition-colors flex items-center gap-1.5 text-sm"
-              >
-                Find Us on Maps
               </a>
             </div>
           </div>

@@ -1,15 +1,23 @@
 import React from 'react';
 import Link from 'next/link';
-import { Phone, CheckCircle, Sparkles, MapPin, ShieldCheck, Heart } from 'lucide-react';
+import { Phone, CheckCircle, Sparkles, MapPin, ShieldCheck, Heart, Star, ArrowRight } from 'lucide-react';
 import ServiceCard from '@/components/ServiceCard';
 import { services } from '@/lib/services';
 
 export default function Home() {
   const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
 
+  /* Quick pricing highlights for the homepage */
+  const quickPrices = [
+    { label: 'Threading', from: services.threading.startingPrice, emoji: '🧵' },
+    { label: 'Facial',    from: services.facial.startingPrice,    emoji: '✨' },
+    { label: 'Waxing',    from: services.waxing.startingPrice,    emoji: '💅' },
+    { label: 'Bleach',    from: services.bleach.startingPrice,    emoji: '🌟' },
+  ];
+
   return (
     <div className="animate-fade-in font-poppins">
-      {/* Hero Section */}
+      {/* ═══════ Hero Section ═══════ */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden py-16">
         <div className="absolute inset-0 hero-pattern opacity-50 z-0" />
         <div className="absolute inset-0 bg-gradient-to-b from-rose/20 to-cream/95 z-0" />
@@ -20,15 +28,29 @@ export default function Home() {
               Exclusive At-Home Services in Bangalore
             </div>
             <h1 className="font-playfair text-4xl sm:text-5xl lg:text-6xl font-bold text-charcoal leading-tight">
-              Luxury Salon Experience at Your Doorstep
+              Luxury Salon Experience at Your <span className="gradient-text-gold">Doorstep</span>
             </h1>
             <p className="font-playfair text-xl md:text-2xl text-charcoal/80">
               Professional services in your comfort. ✨
             </p>
+
+            {/* Quick Price Ticker */}
+            <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
+              {quickPrices.map((item) => (
+                <span
+                  key={item.label}
+                  className="price-tag text-xs flex items-center gap-1.5"
+                >
+                  <span>{item.emoji}</span>
+                  <span>{item.label} from {item.from}</span>
+                </span>
+              ))}
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
               <Link
                 href="/booking"
-                className="bg-mauve text-white px-8 py-4 rounded-full font-semibold text-center hover:scale-105 btn-active-scale transition-all shadow-lg hover:bg-mauve/95"
+                className="bg-mauve text-white px-8 py-4 rounded-full font-semibold text-center hover:scale-105 btn-active-scale transition-all shadow-lg hover:bg-mauve/95 animate-pulse-glow"
               >
                 Book Home Appointment
               </Link>
@@ -42,27 +64,36 @@ export default function Home() {
           </div>
           <div className="hidden md:block relative h-[500px]">
             <div className="absolute inset-0 bg-rose/20 rounded-full blur-[80px]" />
-            {/* Using the image from Stitch design */}
             <img
               alt="Luxury At-Home Beauty Treatment"
               className="w-full h-full object-cover rounded-[100px] shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500 border-2 border-rose/30"
-              src="https://lh3.googleusercontent.com/aida/AP1WRLufj8lDA2OuHnCcpkNvgSAYtG_-zqF2RYgpqxnf-4TRm0lXhl8dkDD1R4QF705QThQaFCWA-CKgMaS_zWacoESdGWgtbMNwDsrFMLWASjzjmp3aojzx_8T5ImOYOtEDgTZgqP4lDuIfqHIYfyJUNthXPos-hvTftzzWFt0xr1lE5n97iyYviYXWDgZUmyax7l4RL5XrVKB1QnCPn8khZyu_WDuhXyf487_nLiTpqECvJJEhsbChfXfpkQ"
+              src="/images/home-hero.png"
             />
+            {/* Floating badge */}
+            <div className="absolute -bottom-4 -left-4 bg-white/90 backdrop-blur-md px-5 py-3 rounded-2xl shadow-xl border border-rose/20 animate-float">
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-gold fill-gold" />
+                <span className="font-poppins text-xs font-bold text-charcoal">4.9★ Rated Service</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Services Overview Section */}
+      {/* ═══════ Services Overview Section ═══════ */}
       <section className="py-20 bg-white" id="services">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 space-y-2">
+          <div className="text-center mb-16 space-y-3">
+            <span className="text-mauve font-poppins text-xs font-semibold uppercase tracking-widest">
+              What We Offer
+            </span>
             <h2 className="font-playfair text-3xl md:text-4xl font-bold text-charcoal">
               Signature Home Treatments
             </h2>
             <p className="text-charcoal/70 max-w-lg mx-auto">
               Enjoy premium grooming without leaving the comfort of your home.
             </p>
-            <div className="w-24 h-1 bg-gold mx-auto rounded-full pt-1" />
+            <div className="section-divider mx-auto" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -91,49 +122,63 @@ export default function Home() {
               startingPrice={services.bleach.startingPrice}
             />
           </div>
+
+          {/* View All Prices CTA */}
+          <div className="text-center mt-12">
+            <Link
+              href="/booking"
+              className="inline-flex items-center gap-2 text-mauve font-semibold text-sm hover:text-gold transition-colors group"
+            >
+              View All Services & Prices
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
+      {/* ═══════ Why Choose Us Section ═══════ */}
       <section className="py-20 bg-cream border-y border-rose/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 space-y-2">
+          <div className="text-center mb-16 space-y-3">
+            <span className="text-mauve font-poppins text-xs font-semibold uppercase tracking-widest">
+              Why Shine Beauty
+            </span>
             <h2 className="font-playfair text-3xl md:text-4xl font-bold text-charcoal">
               The At-Home Shine Standard
             </h2>
             <p className="text-charcoal/70 max-w-2xl mx-auto text-base">
-              We bring the luxury of a premium studio directly to your living room. Serving all of Bangalore with meticulous quality.
+              I bring the luxury of a premium studio directly to your living room. A personalized 1-on-1 home visit service across Bangalore limit only.
             </p>
-            <div className="w-24 h-1 bg-gold mx-auto rounded-full pt-1" />
+            <div className="section-divider mx-auto" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Card 1 */}
-            <div className="glass-card p-8 rounded-[24px] text-center space-y-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-gold flex justify-center">
-                <Heart className="w-12 h-12 text-gold fill-gold/10" />
+            <div className="glass-card p-8 rounded-[24px] text-center space-y-4 shadow-sm hover:shadow-md transition-shadow hover-card-effect stagger-child">
+              <div className="w-16 h-16 bg-gradient-to-br from-gold/20 to-gold/5 rounded-2xl flex items-center justify-center mx-auto">
+                <Heart className="w-8 h-8 text-gold fill-gold/10" />
               </div>
               <h3 className="font-playfair text-xl font-bold text-charcoal">Your Comfort First</h3>
               <p className="text-charcoal/70 text-sm leading-relaxed">
-                Skip the stressful Bangalore traffic. Our certified beauticians travel directly to you, carrying mobile setups and premium spa supplies.
+                Skip the stressful Bangalore traffic. As an expert beautician, I travel directly to your home with a fully equipped mobile setup and premium spa supplies.
               </p>
             </div>
 
             {/* Card 2 - Main highlight */}
-            <div className="glass-card p-8 rounded-[24px] text-center space-y-4 shadow-xl border-mauve/20 md:scale-105 z-10 bg-white">
-              <div className="text-gold flex justify-center">
-                <ShieldCheck className="w-12 h-12 text-mauve" />
+            <div className="glass-card p-8 rounded-[24px] text-center space-y-4 shadow-xl border-mauve/20 md:scale-105 z-10 bg-white animate-border-glow stagger-child">
+              <div className="w-16 h-16 bg-gradient-to-br from-mauve/20 to-mauve/5 rounded-2xl flex items-center justify-center mx-auto">
+                <ShieldCheck className="w-8 h-8 text-mauve" />
               </div>
               <h3 className="font-playfair text-xl font-bold text-charcoal">Hygienic Setup</h3>
               <p className="text-charcoal/70 text-sm leading-relaxed">
-                We maintain clinical-grade hygiene standards inside your home. Using sealed disposable kits, organic ingredients, and thoroughly sterilized equipment.
+                I maintain clinical-grade hygiene standards in your home. Using sealed disposable kits, premium organic products, and thoroughly sterilized tools.
               </p>
             </div>
 
             {/* Card 3 */}
-            <div className="glass-card p-8 rounded-[24px] text-center space-y-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-gold flex justify-center">
-                <MapPin className="w-12 h-12 text-gold" />
+            <div className="glass-card p-8 rounded-[24px] text-center space-y-4 shadow-sm hover:shadow-md transition-shadow hover-card-effect stagger-child">
+              <div className="w-16 h-16 bg-gradient-to-br from-gold/20 to-gold/5 rounded-2xl flex items-center justify-center mx-auto">
+                <MapPin className="w-8 h-8 text-gold" />
               </div>
               <h3 className="font-playfair text-xl font-bold text-charcoal">Bangalore Exclusive</h3>
               <p className="text-charcoal/70 text-sm leading-relaxed">
@@ -144,40 +189,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Service Area / Locations Section */}
+      {/* ═══════ How It Works Section ═══════ */}
       <section className="py-20 bg-white" id="area">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
+              <span className="text-mauve font-poppins text-xs font-semibold uppercase tracking-widest">
+                How It Works
+              </span>
               <h2 className="font-playfair text-3xl md:text-4xl font-bold text-charcoal">
                 Professional Salon, Brought to You
               </h2>
               <p className="text-charcoal/75 leading-relaxed">
-                Say goodbye to travel fatigue. Our premium beauty solutions are offered in the quiet comfort of your private residence. Here is how simple it is:
+                Say goodbye to travel fatigue. I deliver premium parlor treatments directly to the quiet comfort of your private residence.
               </p>
 
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <CheckCircle className="w-6 h-6 text-gold shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-charcoal text-sm uppercase tracking-wider">1. Schedule a Visit</h4>
-                    <p className="text-xs text-charcoal/60">Choose a convenient date & hour via our online booking form.</p>
+              <div className="space-y-5">
+                {[
+                  { step: '01', title: 'Schedule a Visit', desc: 'Choose a convenient date & hour via the online booking form.' },
+                  { step: '02', title: 'Relax at Home', desc: 'I arrive on time with a complete luxury beauty service kit.' },
+                  { step: '03', title: 'Personalized Care', desc: 'Sit back and enjoy your pampering session without any step-out stress.' },
+                ].map((item) => (
+                  <div key={item.step} className="flex gap-4 stagger-child">
+                    <div className="w-10 h-10 bg-gradient-to-br from-gold/20 to-gold/5 rounded-xl flex items-center justify-center shrink-0">
+                      <span className="font-playfair text-sm font-bold text-gold">{item.step}</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-charcoal text-sm">{item.title}</h4>
+                      <p className="text-xs text-charcoal/60">{item.desc}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-4">
-                  <CheckCircle className="w-6 h-6 text-gold shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-charcoal text-sm uppercase tracking-wider">2. Relax at Home</h4>
-                    <p className="text-xs text-charcoal/60">An expert technician arrives on time with a complete service kit.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <CheckCircle className="w-6 h-6 text-gold shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-charcoal text-sm uppercase tracking-wider">3. Premium Treatment</h4>
-                    <p className="text-xs text-charcoal/60">Sit back and enjoy your pampering session without any step-out stress.</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -185,7 +227,7 @@ export default function Home() {
               <h3 className="font-playfair text-xl font-bold text-charcoal mb-6 text-center">Serviceable Locations</h3>
               <div className="grid grid-cols-2 gap-3">
                 {['Koramangala', 'Indiranagar', 'Whitefield', 'Jayanagar', 'HSR Layout', 'Electronic City', 'Hebbal', 'Malleshwaram'].map((loc) => (
-                  <div key={loc} className="p-3 bg-white text-center rounded-xl text-xs font-semibold text-charcoal shadow-sm border border-rose/10">
+                  <div key={loc} className="p-3 bg-white text-center rounded-xl text-xs font-semibold text-charcoal shadow-sm border border-rose/10 hover:border-gold/30 hover:shadow-md transition-all">
                     {loc}
                   </div>
                 ))}
@@ -198,9 +240,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-rose/40 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+      {/* ═══════ CTA Section ═══════ */}
+      <section className="py-16 bg-gradient-to-r from-rose/40 via-rose/30 to-rose/40 relative overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute top-0 left-1/4 w-48 h-48 bg-gold/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-mauve/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left relative z-10">
           <div>
             <h2 className="font-playfair text-3xl font-bold text-charcoal flex items-center justify-center md:justify-start gap-2">
               Ready to Shine at Home? <Sparkles className="w-6 h-6 text-gold fill-gold/10" />

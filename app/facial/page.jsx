@@ -1,22 +1,26 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, Phone, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, Phone, CheckCircle2, Plus, Check } from 'lucide-react';
 import { services } from '@/lib/services';
+import { useCart } from '@/lib/CartContext';
 
 export default function Facial() {
   const data = services.facial;
   const raagaSection = data.sections[0];
   const lotusSection = data.sections[1];
   const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
+  const { addToCart, removeFromCart, isItemInCart } = useCart();
 
   return (
     <div className="animate-fade-in font-poppins min-h-screen bg-cream">
-      {/* Hero Section */}
+      {/* ═══════ Hero Section ═══════ */}
       <section
         className="relative h-[55vh] min-h-[400px] flex items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
           backgroundImage:
-            'url("https://lh3.googleusercontent.com/aida/AP1WRLt8dhA-wfDCLqQP6GabCOhLOh75PyUlmow8yGngbvXV0nj9BV69_jpopp7p7vnHebSCOSjwifRegdyi3PkVXkoVE4Fto_Il00rTvr2rBGENuXqvarCH_C0QNN5rhHN1DH7CF7z7Q0AqKcJ8DWwHAyVyUtJqG7c1w9G5OLIW4WXvA6A3ShIeyt8gNGhg96Vm-PnAtnOaebwDu_r8tiQwWIQDw2itgyHwHU-EuU3tA-_-m8YtLqV40JGlBjY")',
+            'url("/images/facial-hero.png")',
         }}
       >
         <div className="absolute inset-0 bg-charcoal/40 bg-gradient-to-b from-transparent to-cream/95 z-0" />
@@ -27,13 +31,17 @@ export default function Facial() {
           <h1 className="font-playfair text-4xl sm:text-5xl font-bold text-white drop-shadow-md mb-4">
             Facial Services {data.emoji}
           </h1>
-          <p className="text-white font-medium text-sm sm:text-base leading-relaxed drop-shadow-sm max-w-2xl mx-auto">
+          <p className="text-white font-medium text-sm sm:text-base leading-relaxed drop-shadow-sm max-w-2xl mx-auto mb-6">
             Glow, rejuvenate, and transform your skin with our curated selection of luxury facial treatments designed for ultimate skin health.
           </p>
+          {/* Price pill */}
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-full px-5 py-2 text-sm font-semibold">
+            Starting from <span className="font-playfair font-bold text-lg">{data.startingPrice}</span>
+          </div>
         </div>
       </section>
 
-      {/* Raaga Facials Bento Grid */}
+      {/* ═══════ Raaga Facials Bento Grid ═══════ */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
@@ -41,6 +49,7 @@ export default function Facial() {
               Premium Selection
             </span>
             <h2 className="font-playfair text-3xl font-bold text-charcoal mt-1">Raaga Facials</h2>
+            <div className="section-divider mt-3" />
           </div>
           <p className="text-charcoal/70 max-w-md font-poppins text-sm leading-relaxed">
             Advanced dermatological solutions for specific skin concerns including anti-ageing, hyperpigmentation, acne reduction, and deep skin rejuvenation.
@@ -50,33 +59,46 @@ export default function Facial() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {raagaSection.items.map((item, idx) => {
             const isPopular = item.name === 'Clean Up Fruit' || item.name === 'O3+ Bridal Facial';
+            const emojis = ['💆‍♀️', '✨', '🌸', '🌿', '💎', '👑', '🌟', '🪷', '☀️'];
             return (
               <div
                 key={item.name}
-                className="bg-white border border-rose/15 rounded-[24px] p-6 flex flex-col justify-between shadow-sm hover-card-effect relative overflow-hidden group"
+                className="bg-white border border-rose/15 rounded-[28px] p-6 flex flex-col justify-between shadow-sm hover-card-lift relative overflow-hidden group stagger-child"
               >
+                {/* Accent corner */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-rose/10 to-transparent rounded-bl-full pointer-events-none" />
+
                 {isPopular && (
-                  <div className="absolute top-0 right-0 pt-4 pr-4">
-                    <span className="bg-[#fed65b] text-[#745c00] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider font-poppins">
+                  <div className="absolute top-0 right-0 pt-4 pr-4 z-10">
+                    <span className="bg-[#fed65b] text-[#745c00] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider font-poppins shadow-sm">
                       Popular
                     </span>
                   </div>
                 )}
-                <div>
-                  <div className="mb-4 text-3xl">
-                    {idx % 3 === 0 ? '💆‍♀️' : idx % 3 === 1 ? '✨' : '🌸'}
+                <div className="relative z-10">
+                  <div className="mb-4 w-10 h-10 bg-rose/15 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    {emojis[idx] || '✨'}
                   </div>
                   <h3 className="font-playfair text-xl font-bold text-charcoal mb-2">{item.name}</h3>
-                  <p className="text-charcoal/70 text-sm font-poppins mb-6">{item.desc}</p>
+                  <p className="text-charcoal/70 text-sm font-poppins mb-6 leading-relaxed">{item.desc}</p>
                 </div>
                 <div className="flex justify-between items-center border-t border-rose/10 pt-4 mt-auto">
                   <span className="font-playfair text-xl font-bold text-gold">{item.price}</span>
-                  <Link
-                    href={`/booking?category=Facial&service=${encodeURIComponent(item.name)}`}
-                    className="text-mauve font-semibold text-sm hover:text-gold transition-colors flex items-center gap-1 min-h-[48px]"
-                  >
-                    Book Now <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  {isItemInCart('Facial', item.name) ? (
+                    <button
+                      onClick={() => removeFromCart('Facial', item.name)}
+                      className="text-gold font-semibold text-sm hover:text-mauve transition-colors flex items-center gap-1 min-h-[48px] cursor-pointer"
+                    >
+                      Selected <Check className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => addToCart({ category: 'Facial', name: item.name, price: item.price })}
+                      className="text-mauve font-semibold text-sm hover:text-gold transition-colors flex items-center gap-1 min-h-[48px] cursor-pointer"
+                    >
+                      Add to cart <Plus className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -84,8 +106,8 @@ export default function Facial() {
         </div>
       </section>
 
-      {/* Lotus Facials Section */}
-      <section className="bg-rose/10 py-20 border-y border-rose/15 overflow-hidden">
+      {/* ═══════ Lotus Facials Section ═══════ */}
+      <section className="bg-gradient-to-b from-rose/10 to-rose/5 py-20 border-y border-rose/15 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Image Col */}
@@ -94,9 +116,15 @@ export default function Facial() {
                 <img
                   alt="Spa Treatment"
                   className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida/AP1WRLucXPlRcXHoazMPrOL3c1WfjqVDSDAsOw9nLf6-Zc55CsRJm2ODTl5ZkoUJUvuuzqILyvMM2bTN77tFm76aYpCEZVBpusswC_SW2YJdcCBZCoQuohtmYhORJTN4borieHDfbkPuvLZwJY7qkh2q8ShA1G9QrycO1tM0uZ42lb0lyhqfCLwQNqmGWWXQ_qUfGBskKgVZDuuf1nT1w3dEUM9QaRda9ndnxEwzM_inXjseSv5PNRL0zMoI4w"
+                  src="/images/spa-treatment.png"
                 />
                 <div className="absolute inset-0 border-[12px] border-white/20 pointer-events-none rounded-[32px]" />
+              </div>
+              {/* Floating badge */}
+              <div className="absolute -bottom-4 -right-4 bg-white/90 backdrop-blur-md px-5 py-3 rounded-2xl shadow-xl border border-rose/20 animate-float hidden sm:block">
+                <p className="font-poppins text-xs font-bold text-charcoal flex items-center gap-1.5">
+                  🪷 Botanical Formulas
+                </p>
               </div>
             </div>
 
@@ -109,33 +137,48 @@ export default function Facial() {
                 <h2 className="font-playfair text-3xl sm:text-4xl font-bold text-charcoal mt-1">
                   Lotus Facials
                 </h2>
+                <div className="section-divider mt-3" />
               </div>
 
-              <div className="space-y-4">
-                {lotusSection.items.map((item) => {
+              <div className="space-y-0">
+                {lotusSection.items.map((item, idx) => {
                   const isCallPrice = item.price.toLowerCase().includes('call');
                   return (
                     <div
                       key={item.name}
-                      className="flex justify-between items-center border-b border-rose/15 pb-4 group hover:border-gold transition-colors"
+                      className={`flex justify-between items-center py-4 group hover:bg-white/50 px-3 -mx-3 rounded-xl transition-colors stagger-child ${
+                        idx < lotusSection.items.length - 1 ? 'border-b border-rose/15' : ''
+                      }`}
                     >
-                      <span className="font-poppins text-charcoal/80 group-hover:text-charcoal font-medium">
-                        {item.name}
-                      </span>
+                      <div>
+                        <span className="font-poppins text-charcoal/80 group-hover:text-charcoal font-medium">
+                          {item.name}
+                        </span>
+                        {item.desc && (
+                          <p className="text-[10px] text-charcoal/50 font-poppins mt-0.5">{item.desc}</p>
+                        )}
+                      </div>
                       {isCallPrice ? (
                         <a
                           href={`tel:${phone}`}
-                          className="font-poppins text-xs font-semibold text-mauve border border-mauve px-3 py-1.5 rounded-full hover:bg-mauve hover:text-white transition-colors"
+                          className="font-poppins text-xs font-semibold text-mauve border border-mauve px-3 py-1.5 rounded-full hover:bg-mauve hover:text-white transition-colors shrink-0"
                         >
                           Call to Inquire
                         </a>
-                      ) : (
-                        <Link
-                          href={`/booking?category=Facial&service=${encodeURIComponent(item.name)}`}
-                          className="font-playfair text-lg font-bold text-gold hover:text-mauve transition-colors"
+                      ) : isItemInCart('Facial', item.name) ? (
+                        <button
+                          onClick={() => removeFromCart('Facial', item.name)}
+                          className="font-poppins text-xs font-semibold text-gold border border-gold px-3 py-1.5 rounded-full hover:bg-gold hover:text-white transition-colors shrink-0 flex items-center gap-1 cursor-pointer"
                         >
-                          {item.price}
-                        </Link>
+                          Selected <Check className="w-3.5 h-3.5" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => addToCart({ category: 'Facial', name: item.name, price: item.price })}
+                          className="font-poppins text-xs font-semibold text-mauve border border-mauve px-3 py-1.5 rounded-full hover:bg-mauve hover:text-white transition-colors shrink-0 flex items-center gap-1 cursor-pointer"
+                        >
+                          Add {item.price} <Plus className="w-3.5 h-3.5" />
+                        </button>
                       )}
                     </div>
                   );
@@ -155,36 +198,62 @@ export default function Facial() {
         </div>
       </section>
 
-      {/* Gallery / Visual Grid */}
+      {/* ═══════ Quick Benefits ═══════ */}
+      <section className="py-16 bg-white border-b border-rose/10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {[
+              { icon: '🧴', title: 'Premium Products', desc: 'I use only Raaga, Lotus, and O3+ professional-grade facial kits.' },
+              { icon: '👩‍⚕️', title: 'Trained Beautician', desc: 'Certified skin specialist (owner) with years of experience delivering premium facial treatments.' },
+              { icon: '🏠', title: 'At Your Doorstep', desc: 'Full spa-quality facial experience in the comfort of your home.' },
+            ].map((item) => (
+              <div key={item.title} className="text-center space-y-3 p-6 rounded-2xl hover:bg-cream/50 transition-colors stagger-child">
+                <div className="text-3xl">{item.icon}</div>
+                <h4 className="font-playfair text-base font-bold text-charcoal">{item.title}</h4>
+                <p className="text-charcoal/60 text-xs leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ Gallery / Visual Grid ═══════ */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 space-y-2">
+            <span className="text-mauve font-poppins text-xs font-semibold uppercase tracking-widest">
+              Our Ingredients
+            </span>
+            <h2 className="font-playfair text-2xl font-bold text-charcoal">Natural & Premium</h2>
+            <div className="section-divider mx-auto" />
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="rounded-[24px] overflow-hidden aspect-square border border-rose/10 shadow-sm hover:scale-[1.02] transition-transform duration-300">
               <img
                 alt="Organic skincare ingredients"
                 className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida/AP1WRLu5nPmzM1giX4NrBlfVb6OcZdNtvem7HYQbbsvlYP1fq4qhf5TVVthC1vBWgUvu4KjNNFwIIsbPG_gEYd4wiM4DiRk2q8wUw_d0ZD9-M6TzQUn-CzSuFTHLL8b2jAT7N5klndKnayaaCCT6Y3ILqdD-G2aUoU1RQnCjn80Dn0bdtaEqKGtV2Sei2sAI6tX-kL-8npsElodvS7Cb9Dwa58aNt3olL4jOJg2y9wyf0ldesNOfnvJoAQ4Sg1Q"
+                src="/images/skincare-products.png"
               />
             </div>
             <div className="rounded-[24px] overflow-hidden aspect-square border border-rose/10 shadow-sm hover:scale-[1.02] transition-transform duration-300">
               <img
                 alt="Gold mask application"
                 className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida/AP1WRLtJRqPaFqxmv1ExvzKaMnOjPYeLy4seAJLduo4KO4u0YE789JQq3nm7cCgYZ-UFPkztSwFVqs-rDgr4BII2t5JGvRRRHR_CUz_U0RtnTXANWAjlMSIm5hkEcs7sG8ygVCHG09XWmplXr2QcMSPgv5eYwNX7TMwwK71WjXl84uorA-N4tM3Ski2LFJkGt3rL1u1WgVkGyxiCFdGuZRoD2BuKu357aoUeX6QFpKz4Yhx3ItnoeLG5mRVdzQ"
+                src="/images/gold-mask.png"
               />
             </div>
             <div className="rounded-[24px] overflow-hidden aspect-square border border-rose/10 shadow-sm hover:scale-[1.02] transition-transform duration-300">
               <img
                 alt="Facial treatment bed"
                 className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida/AP1WRLvw9mIxVdxZMcp_ACmBxvh_zxtf5m6wDJjVLDO7kJRVmD8o6mWQCEanBIa3H4JUrfN5syQ5mHFbEsPf8zqJ-aF5G9KUIBat7a2NzhQYYzcKCEhx-neFazIBkEYHBWZP16EWqKA7oAcEnhvw57INdvHwDIR0LF5MEsZnZhTGQ8JoXnqPcsSt0GrmQMG3ShjJ499ZdjQvWfvn-o_x9T7MC7y2DxMEi_MYGJBcezIUFOatS37nKS4qbjlM3QE"
+                src="/images/spa-treatment.png"
               />
             </div>
             <div className="rounded-[24px] overflow-hidden aspect-square border border-rose/10 shadow-sm hover:scale-[1.02] transition-transform duration-300">
               <img
                 alt="Water droplets on lotus"
                 className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida/AP1WRLt0tlZueWveX-WZk5Fkf0WWiv7v4rhiAv5VF_2oMp7UY6gRuZg01M6dv3H7mlbhlMIYvUmfad1xpWqHzscMNBFdzwAG1WH6ZetvyXyRu-YOnxeLlnin96G6FBPab_qFAmeU_RPyerwcCGrJ_o9aZYm-o0lcUjbcJur5-HxOm0iK_rkzQDgzKUITYK23SFSgZLeiq0sBqxX5vucIz0uObp7o9es97eXIH8IaYCYr8J1-u7yWWCx2VNtSwrI"
+                src="/images/skincare-products.png"
               />
             </div>
           </div>
