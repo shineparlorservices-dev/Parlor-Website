@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import CartPopup from '@/components/CartPopup';
 import { CartProvider } from '@/lib/CartContext';
 
 const playfair = Playfair_Display({
@@ -35,8 +36,10 @@ export default function RootLayout({ children }) {
           </main>
           <Footer />
           <WhatsAppButton />
+          <CartPopup />
         </CartProvider>
       </body>
     </html>
   );
 }
+

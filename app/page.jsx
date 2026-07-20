@@ -102,24 +102,32 @@ export default function Home() {
               emoji={services.threading.emoji}
               slug={services.threading.slug}
               startingPrice={services.threading.startingPrice}
+              image={services.threading.image}
+              description={services.threading.description}
             />
             <ServiceCard
               title={services.facial.title}
               emoji={services.facial.emoji}
               slug={services.facial.slug}
               startingPrice={services.facial.startingPrice}
+              image={services.facial.image}
+              description={services.facial.description}
             />
             <ServiceCard
               title={services.waxing.title}
               emoji={services.waxing.emoji}
               slug={services.waxing.slug}
               startingPrice={services.waxing.startingPrice}
+              image={services.waxing.image}
+              description={services.waxing.description}
             />
             <ServiceCard
               title={services.bleach.title}
               emoji={services.bleach.emoji}
               slug={services.bleach.slug}
               startingPrice={services.bleach.startingPrice}
+              image={services.bleach.image}
+              description={services.bleach.description}
             />
           </div>
 
