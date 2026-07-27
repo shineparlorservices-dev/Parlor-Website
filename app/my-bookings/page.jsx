@@ -15,7 +15,7 @@ function MyBookingsContent() {
   const [error, setError] = useState('');
   const [isDemo, setIsDemo] = useState(false);
 
-  const scriptUrl = process.env.NEXT_PUBLIC_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyqOfYs07x8-e-SNEIfa9qWgDMtN2UnruOujm6Ruo41SklBq6tvZKK05qQnAL23IgK/exec';
+  const scriptUrl = process.env.NEXT_PUBLIC_SCRIPT_URL || 'YOUR_APPS_SCRIPT_URL';
   const ownerPhone = process.env.NEXT_PUBLIC_PHONE || '+91 8073670366';
 
   // Read phone search param on mount and auto-trigger search
@@ -69,7 +69,7 @@ function MyBookingsContent() {
     };
 
     // If scriptUrl is the default placeholder, fallback to demo mode
-    if (scriptUrl === 'https://script.google.com/macros/s/AKfycbxyqOfYs07x8-e-SNEIfa9qWgDMtN2UnruOujm6Ruo41SklBq6tvZKK05qQnAL23IgK/exec') {
+    if (scriptUrl === 'YOUR_APPS_SCRIPT_URL') {
       setTimeout(() => {
         // Mock data matching subServices and database
         const mockData = [

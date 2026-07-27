@@ -27,7 +27,7 @@ export default function BookingForm() {
 
   // Constants
   const ownerPhone = process.env.NEXT_PUBLIC_PHONE || '+91 8073670366';
-  const scriptUrl = process.env.NEXT_PUBLIC_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxyqOfYs07x8-e-SNEIfa9qWgDMtN2UnruOujm6Ruo41SklBq6tvZKK05qQnAL23IgK/exec';
+  const scriptUrl = process.env.NEXT_PUBLIC_SCRIPT_URL || 'YOUR_APPS_SCRIPT_URL';
 
   // Get current date string for input minimum (formatted as YYYY-MM-DD in client timezone)
   const [minDate, setMinDate] = useState('');
@@ -115,7 +115,7 @@ export default function BookingForm() {
 
     try {
       // POST request to Google Apps Script
-      if (scriptUrl !== 'https://script.google.com/macros/s/AKfycbxyqOfYs07x8-e-SNEIfa9qWgDMtN2UnruOujm6Ruo41SklBq6tvZKK05qQnAL23IgK/exec') {
+      if (scriptUrl !== 'YOUR_APPS_SCRIPT_URL') {
         await fetch(scriptUrl, {
           method: 'POST',
           headers: {
