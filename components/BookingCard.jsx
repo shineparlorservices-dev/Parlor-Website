@@ -21,7 +21,18 @@ export default function BookingCard({ category, subService, date, time, status, 
   };
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return '';
     try {
+      if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr.trim())) {
+        const [year, month, day] = dateStr.trim().split('-').map(Number);
+        const d = new Date(year, month - 1, day);
+        return d.toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      }
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
       return d.toLocaleDateString('en-US', {
@@ -37,11 +48,45 @@ export default function BookingCard({ category, subService, date, time, status, 
 
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
-    // Check if it's a serialized Date/Time object from Apps Script (usually 1899 epoch date)
-    if (typeof timeStr === 'string' && timeStr.includes('T') && (timeStr.startsWith('1899-') || timeStr.startsWith('1900-'))) {
+    const str = String(timeStr).trim();
+
+    // 1. If it's already a 12-hour formatted time string (e.g., "09:00 AM", "9:00 AM", "11:00 AM", "03:00 PM")
+    if (/^\d{1,2}:\d{2}\s*(AM|PM)$/i.test(str)) {
+      return str;
+    }
+
+    // 2. If it's a 24-hour formatted time string (e.g., "09:00", "14:30", "19:00")
+    if (/^\d{1,2}:\d{2}$/.test(str)) {
+      const [hStr, mStr] = str.split(':');
+      let hours = parseInt(hStr, 10);
+      const minutes = mStr;
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
+    // 3. If it's an ISO date-time string (e.g., from Google Apps Script / Google Sheets 1899 epoch date)
+    if (str.includes('T')) {
       try {
-        const d = new Date(timeStr);
+        const d = new Date(str);
         if (!isNaN(d.getTime())) {
+          // Check for 1899/1900 Apps Script serialized epoch dates
+          if (str.startsWith('1899-') || str.startsWith('1900-')) {
+            // Apps Script serialized a Google Sheets time cell in IST to UTC ISO string.
+            // e.g., 09:00 AM IST converted to UTC 03:21:00.000Z.
+            // Convert UTC timestamp back to IST (+330 mins) and round to nearest 30 mins to correct 1899 historical offset differences.
+            const utcMinutes = d.getUTCHours() * 60 + d.getUTCMinutes();
+            const istMinutes = utcMinutes + 330;
+            const roundedTotalMinutes = Math.round(istMinutes / 30) * 30;
+            const totalMins = (roundedTotalMinutes % 1440 + 1440) % 1440;
+            let hours = Math.floor(totalMins / 60);
+            const minutes = totalMins % 60;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            const minStr = String(minutes).padStart(2, '0');
+            return `${hours}:${minStr} ${ampm}`;
+          }
+
           return d.toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
@@ -49,10 +94,11 @@ export default function BookingCard({ category, subService, date, time, status, 
           });
         }
       } catch {
-        return timeStr;
+        return str;
       }
     }
-    return timeStr;
+
+    return str;
   };
 
   return (
