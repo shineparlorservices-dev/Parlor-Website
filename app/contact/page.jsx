@@ -2,9 +2,9 @@ import React from 'react';
 import { Phone, MessageCircle, Mail, Clock, MapPin, CheckCircle, Sparkles } from 'lucide-react';
 
 export default function Contact() {
-  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
-  const email = process.env.NEXT_PUBLIC_EMAIL || 'owner@gmail.com';
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || '919999999999';
+  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 8073670366';
+  const email = process.env.NEXT_PUBLIC_EMAIL || 'shineparlorservices@gmail.com';
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || '8073670366';
 
   const contactActions = [
     {
