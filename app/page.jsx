@@ -5,7 +5,7 @@ import ServiceCard from '@/components/ServiceCard';
 import { services } from '@/lib/services';
 
 export default function Home() {
-  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
+  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 8073670366';
 
   /* Quick pricing highlights for the homepage */
   const quickPrices = [

@@ -4,7 +4,7 @@ import { Phone, MessageCircle, Mail, Clock, MapPin, CheckCircle, Sparkles } from
 export default function Contact() {
   const phone = process.env.NEXT_PUBLIC_PHONE || '+91 8073670366';
   const email = process.env.NEXT_PUBLIC_EMAIL || 'shineparlorservices@gmail.com';
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || '8073670366';
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || '918073670366';
 
   const contactActions = [
     {
