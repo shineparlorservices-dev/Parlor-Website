@@ -2,8 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function Footer() {
-  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
-  const email = process.env.NEXT_PUBLIC_EMAIL || 'owner@gmail.com';
+  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 8073670366';
+  const email = process.env.NEXT_PUBLIC_EMAIL || 'shineparlorservices@gmail.com';
   const instagram = 'YOUR_INSTAGRAM_URL';
 
   return (
@@ -65,7 +65,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="text-cream/70 hover:text-rose transition-colors flex items-center gap-1.5 text-sm"
               >
-                Instagram
+              {/* Instagram */}
               </a>
             </div>
           </div>

@@ -10,7 +10,7 @@ export default function Facial() {
   const data = services.facial;
   const raagaSection = data.sections[0];
   const lotusSection = data.sections[1];
-  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 9999999999';
+  const phone = process.env.NEXT_PUBLIC_PHONE || '+91 8073670366';
   const { addToCart, removeFromCart, isItemInCart } = useCart();
 
   return (

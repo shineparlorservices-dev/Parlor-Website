@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function WhatsAppButton() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || '919999999999';
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || '918073670366';
   const text = encodeURIComponent('Hi! I want to book an appointment at Shine Beauty Services');
   const href = `https://wa.me/${whatsappNumber}?text=${text}`;
 
